@@ -1,0 +1,15 @@
+@CinPOS_rewrite_HostAddress = http://localhost:5115
+
+### Get users
+GET {{CinPOS_rewrite_HostAddress}}/users
+Accept: application/json
+
+
+### Create user
+POST {{CinPOS_rewrite_HostAddress}}/users
+Content-Type: application/json
+
+{
+  "name": "Wen2",
+  "email": "we2@example.com"
+}

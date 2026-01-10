@@ -1,0 +1,36 @@
+## Build results
+bin/
+obj/
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Rider
+.idea/
+*.sln.iml
+
+## VS Code
+.vscode/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## ASP.NET Core
+appsettings.Development.json
+appsettings.Local.json
+
+## EF / DB
+*.mdf
+*.ldf
+
+## Logs
+*.log
+logs/
+
+## Publish
+publish/
