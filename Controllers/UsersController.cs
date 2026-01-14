@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CinPOS_rewrite.Data;
 using CinPOS_rewrite.Models;
+using CinPOS_rewrite.Dtos; // ← <Dtos寫法> 新增這行
 
 namespace CinPOS_rewrite.Controllers;
 
@@ -43,8 +44,6 @@ public class UsersController : ControllerBase
     //}
 
     // <Dtos寫法>
-    using CinPOS_rewrite.Dtos; // ← 新增這行
-
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser(CreateUserDto dto)
     {

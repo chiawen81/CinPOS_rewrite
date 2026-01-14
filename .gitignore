@@ -28,9 +28,4 @@ appsettings.Local.json
 *.mdf
 *.ldf
 
-## Logs
-*.log
-logs/
-
-## Publish
-publish/
+## Logs=
