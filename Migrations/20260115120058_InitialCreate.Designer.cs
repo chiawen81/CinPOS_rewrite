@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinPOS_rewrite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260115085859_InitialCreate")]
+    [Migration("20260115120058_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,15 +47,71 @@ namespace CinPOS_rewrite.Migrations
                     b.ToTable("Options");
                 });
 
-            modelBuilder.Entity("CinPOS_rewrite.Models.TicketType", b =>
+            modelBuilder.Entity("CinPOS_rewrite.Models.Ticket", b =>
                 {
-                    b.Property<string>("Type")
+                    b.Property<string>("TicketId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRefund")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MovieId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Type");
+                    b.Property<int>("RefundMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ScheduleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SeatId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TicketTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("TicketTypeId");
+
+                    b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("CinPOS_rewrite.Models.TicketType", b =>
+                {
+                    b.Property<int>("TicketTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketTypeId"));
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TicketTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TicketTypeId");
 
                     b.ToTable("TicketTypes");
                 });
@@ -87,6 +143,17 @@ namespace CinPOS_rewrite.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CinPOS_rewrite.Models.Ticket", b =>
+                {
+                    b.HasOne("CinPOS_rewrite.Models.TicketType", "TicketType")
+                        .WithMany()
+                        .HasForeignKey("TicketTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TicketType");
                 });
 #pragma warning restore 612, 618
         }
