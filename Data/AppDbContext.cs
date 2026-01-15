@@ -46,6 +46,7 @@ public class AppDbContext : DbContext
     // 選項
     public DbSet<Option> Options { get; set; }
 
-
+    // 電影票
+    public DbSet<Ticket> Tickets { get; set; }
 
 }
