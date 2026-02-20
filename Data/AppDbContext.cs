@@ -46,7 +46,15 @@ public class AppDbContext : DbContext
     // 選項
     public DbSet<Option> Options { get; set; }
 
-    // 電影票
+    // 電影票類型
     public DbSet<Ticket> Tickets { get; set; }
+
+    // 電影資訊
+    public DbSet<Movie> Movies { get; set; }
+    public DbSet<MovieGenre> MovieGenres { get; set; }
+    public DbSet<Genre> Genres { get; set; }
+    public DbSet<MovieProvideVersion> MovieProvideVersions { get; set; }
+    public DbSet<ProvideVersion> ProvideVersions { get; set; }
+    public DbSet<MovieCast> MovieCasts { get; set; }
 
 }

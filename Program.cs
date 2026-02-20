@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CinPOS_rewrite.Data;
-
+using CinPOS_rewrite.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,5 +35,29 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// ————————————————  塞假資料 ———————————————— 
+//// 電影類型代碼與對應中文
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    SeedMockDataGenres.DbInitialize(context);
+//}
+
+
+//// 影廳設備代碼與對應中文
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    SeedMockDataProvideVersions.DbInitialize(context);
+//}
+
+
+//// 電影
+//await SeedMockDataMovies.SeedAsync(app.Services);
+///**NOTE
+// * 用途：測試新增電影並一次撈出它的 Navigation Property（ex:類型、演員）
+// */
+
 
 app.Run();
