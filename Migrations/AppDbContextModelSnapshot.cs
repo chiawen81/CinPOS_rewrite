@@ -97,7 +97,7 @@ namespace CinPOS_rewrite.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ActorName")
+                    b.Property<string>("CastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

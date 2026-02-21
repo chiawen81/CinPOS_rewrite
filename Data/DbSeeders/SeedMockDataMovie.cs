@@ -37,9 +37,9 @@ public static class SeedMockDataMovies
 				},
                 MovieCasts = new List<MovieCast>									// Navigation Property 直接塞入關聯資料
 				{
-					new MovieCast { ActorName = "許光漢" },
-					new MovieCast { ActorName = "林柏宏" },
-					new MovieCast { ActorName = "王淨" }
+					new MovieCast { CastName = "許光漢" },
+					new MovieCast { CastName = "林柏宏" },
+					new MovieCast { CastName = "王淨" }
 				}
 			};
 
@@ -58,7 +58,7 @@ public static class SeedMockDataMovies
 		{
 			Console.WriteLine("類型：" + string.Join(", ", result.MovieGenres.Select(mg => mg.Genre.GenreName)));
             Console.WriteLine("版本：" + string.Join(", ", result.MovieProvideVersions.Select(mpv => mpv.ProvideVersion.ProvideVersionName)));
-            Console.WriteLine("演員：" + string.Join(", ", result.MovieCasts.Select(c => c.ActorName)));
+            Console.WriteLine("演員：" + string.Join(", ", result.MovieCasts.Select(c => c.CastName)));
             Console.WriteLine($"\n🎬 {result.Title} 資料初始化完成\n 測試 Navigation Property 關聯成功");
         }
     }

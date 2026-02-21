@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinPOS_rewrite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260220144903_InitialCreate")]
+    [Migration("20260221093340_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -100,7 +100,7 @@ namespace CinPOS_rewrite.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ActorName")
+                    b.Property<string>("CastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

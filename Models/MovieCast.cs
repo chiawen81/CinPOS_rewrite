@@ -8,7 +8,7 @@ public class MovieCast
     public int Id { get; set; }
 
     public string MovieId { get; set; } = null!;
-    public string ActorName { get; set; } = null!;
+    public string CastName { get; set; } = null!;
 
     // Navigation
     public Movie Movie { get; set; } = null!;

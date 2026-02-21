@@ -113,7 +113,7 @@ namespace CinPOS_rewrite.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MovieId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ActorName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CastName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
