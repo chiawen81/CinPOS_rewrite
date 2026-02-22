@@ -1,131 +1,65 @@
-// ===== ¤Ş¥Î©R¦WªÅ¶¡ =====
-using Microsoft.AspNetCore.Mvc;           // ¨Ï¥Î [ApiController]¡BControllerBase¡BIActionResult µ¥ MVC ®Ö¤ß
-using Microsoft.EntityFrameworkCore;      // ¨Ï¥Î .Include()¡B.ToListAsync() µ¥ EF Core ÂX¥R¤èªk
-using CinPOS_rewrite.Data;                // ¨Ï¥Î AppDbContext¡]§Aªº¸ê®Æ®w³s½u¡^
-using CinPOS_rewrite.DTOs.Movie;          // ¤Ş¥Î Dtos¡GMovieListItemDto¡BMovieDetailDto
-using CinPOS_rewrite.DTOs.Common;         // ¤Ş¥Î Dtos¡GApiResponse<T>¡]²Î¤@¦^À³®æ¦¡¡^
-using CinPOS_rewrite.Enums;               // ¤Ş¥Î Enums¡GMovieStatus¡BMovieRate
-using CinPOS_rewrite.Constants;           // ¤Ş¥Î Constants¡GMovieStatusNames¡BMovieRateNames
+ï»¿// â”€â”€ MoviesController.cs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/**
+ * â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+ * â•‘  MoviesController â€” Movie çš„ HTTP å…¥å£                                                                            â•‘
+ * â• â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•£
+ * â•‘  è·è²¬ï¼šæ¥æ”¶ HTTP Requestï¼Œå‘¼å« Serviceï¼ŒåŒ…è£æˆçµ±ä¸€å›æ‡‰æ ¼å¼å¾Œå›å‚³                                                   â•‘
+ * â•‘  âœ“ æ±ºå®š HTTP ç‹€æ…‹ç¢¼ï¼ˆ200 / 404 ...ï¼‰                                                                              â•‘
+ * â•‘  âœ“ å°‡ Service å›å‚³çš„ DTO åŒ…å…¥ ApiResponse<T>                                                                      â•‘
+ * â•‘  âœ— ä¸è™•ç†æ¥­å‹™é‚è¼¯ï¼ˆé‚£æ˜¯ Service çš„äº‹ï¼‰                                                                            â•‘
+ * â•‘  âœ— ä¸ç›´æ¥æ“ä½œ DBï¼ˆé‚£æ˜¯ Repository çš„äº‹ï¼‰                                                                          â•‘
+ * â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+ */
 
-// ===== «Å§i³o­ÓÃş§Oªº©R¦WªÅ¶¡ =====
+// â”€â”€ å¼•ç”¨å‘½åç©ºé–“ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+using Microsoft.AspNetCore.Mvc;        // [ApiController]ã€ControllerBaseã€IActionResultã€[HttpGet] ç­‰
+using CinPOS_rewrite.DTOs.Movie;       // MovieListItemDtoã€MovieDetailDtoï¼ˆService å›å‚³çš„ DTO å‹åˆ¥ï¼‰
+using CinPOS_rewrite.DTOs.Common;      // ApiResponse<T>ï¼ˆçµ±ä¸€å›æ‡‰æ ¼å¼çš„åŒ…è£å™¨ï¼‰
+using CinPOS_rewrite.Enums;            // MovieStatusï¼ˆEnum å‹åˆ¥ï¼Œç”¨æ–¼å‹åˆ¥è½‰æ›ï¼‰
+using CinPOS_rewrite.Services;         // IMovieServiceï¼ˆæ¥­å‹™é‚è¼¯å±¤ä»‹é¢ï¼‰
+
+// â”€â”€ å®£å‘Šå‘½åç©ºé–“ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 namespace CinPOS_rewrite.Controllers;
 
-[ApiController]                           // §i¶D®Ø¬[³o¬O API Controller¡A¦Û°Ê³B²z ModelState ÅçÃÒ¡B400 ¦^À³
-[Route("api/movies")]                     // ¦¹ Controller ªº°òÂ¦¸ô®|
-public class MoviesController : ControllerBase      // Ä~©Ó ControllerBase¡]¤£§t View¡A¯Â API ¥Î¡^
+[ApiController]           // å•Ÿç”¨ API æ¨¡å¼ï¼šè‡ªå‹•è™•ç† ModelState é©—è­‰ã€400 Bad Request å›æ‡‰
+[Route("api/movies")]     // æ­¤ Controller çš„åŸºç¤è·¯ç”±ï¼š/api/movies
+public class MoviesController : ControllerBase  // ç¹¼æ‰¿ ControllerBaseï¼ˆç´” API ç”¨ï¼Œä¸å« MVC Viewï¼‰
 {
-    private readonly AppDbContext _context;         // «Å§i¨p¦³Äæ¦ì¡Areadonly = ¥u¦b«Øºc¤l½á­È
-
-    public MoviesController(AppDbContext context)   // «Øºc¤l DI¡AASP.NET Core ¦Û°Êª`¤J
+    // â”€â”€ ä¾è³´æ³¨å…¥ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    private readonly IMovieService _service;
+    public MoviesController(IMovieService service) => _service = service; // æ³¨å…¥ Service ä»‹é¢ï¼Œä¸ä¾è³´å…·é«”å¯¦ä½œ
+    
+    // ==== GET /api/moviesï¼šæŸ¥è©¢é›»å½±åˆ—è¡¨ =========================================
+    [HttpGet]
+    public async Task<IActionResult> GetList(
+        [FromQuery] MovieStatus? status,  // Query String åƒæ•¸ï¼šç¯©é¸ç‹€æ…‹ï¼ˆASP.NET Core æœƒè‡ªå‹•è§£æ int â†’ Enumï¼‰
+        [FromQuery] string? title,        // Query String åƒæ•¸ï¼šæ¨¡ç³Šæœå°‹åç¨±
+        [FromQuery] DateTime? searchDateS,// Query String åƒæ•¸ï¼šä¸Šæ˜ æ—¥æœŸèµ·å§‹
+        [FromQuery] DateTime? searchDateE)// Query String åƒæ•¸ï¼šä¸Šæ˜ æ—¥æœŸçµæŸ
     {
-        _context = context;                         // Àx¦sª`¤Jªº DbContext ¨Ñ Action ¨Ï¥Î
-    }
+        // å‘¼å« Service å–å¾— DTO æ¸…å–®ï¼ˆç¯©é¸é‚è¼¯åœ¨ Service / Repository è™•ç†ï¼‰
+        var data = await _service.GetListAsync(status, title, searchDateS, searchDateE);
 
-    // ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù
-    //  GET /api/movies
-    // ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù
-    [HttpGet]                                       // ¹ïÀ³ HTTP GET¡A¸ô®| = °òÂ¦¸ô®| api/movies
-    public async Task<IActionResult> GetList(       // async = «D¦P¨B¡AIActionResult = ¥i¦^¶Ç¥ô¦ó HTTP ¦^À³
-        [FromQuery] int? status,                    // ¤W¬Mª¬ºA
-        [FromQuery] string? title,                  // ¹q¼v¦WºÙ
-        [FromQuery] DateTime? searchDateS,          // ¤W¬M¤é´Á°_
-        [FromQuery] DateTime? searchDateE)          // ¤W¬M¤é´Á¨´
-    /**NOTE¡G[FromQuery]
-     * 
-     * ±qºô§}°Ñ¼Æ¨ú±o¿z¿ï±ø¥ó¡A¨Ï¥Î [FromQuery] ©ú½T«ü©w¨Ó·½¡]ºô§}°Ñ¼Æ½d¨Ò¡G?status=1&title=abc¡^¡A¥i¬° null
-     */
-    {
-        var query = _context.Movies
-            .Include(m => m.MovieGenres).ThenInclude(mg => mg.Genre)
-            .Include(m => m.MovieProvideVersions).ThenInclude(mp => mp.ProvideVersion)
-            .AsQueryable();
-        /**NOTE¡G
-         * 1. Include()¡BThenInclude()¡G
-         *      Include ¸ü¤J Navigation Property MovieGenres¡AThenInclude «á¦A²`¤J¸ü¤J Genre
-         * 2. AsQueryable()¡G
-         *      «O«ù IQueryable¡A«áÄò Where ¤~¯à²Õ¦X¦¨³æ¤@ SQL
-         */
-
-        // ¿z¿ï±ø¥ó
-        if (status.HasValue)
-            query = query.Where(m => m.Status == (MovieStatus)status.Value);        // ­ì©l¸ê®Æ int »P Enum ¤ñ¹ï¡ASQL WHERE Status = @status
-
-        if (!string.IsNullOrEmpty(title))
-            query = query.Where(m => m.Title.Contains(title));                      // SQL LIKE '%title%'
-
-        if (searchDateS.HasValue)
-            query = query.Where(m => m.ReleaseDate >= searchDateS.Value);
-
-        if (searchDateE.HasValue)
-            query = query.Where(m => m.ReleaseDate <= searchDateE.Value);
-
-        var movies = await query.ToListAsync();                                     // ¦¹®É¤~¯u¥¿°e¥X SQL¡A«D¦P¨Bµ¥«İµ²ªG
-
-        // ===== ±N Entity Âà¬° DTO =====
-        var data = movies.Select(m => new MovieListItemDto
-        {
-            Id = m.MovieId,
-            Title = m.Title,
-            StatusName = MovieStatusNames.Names[m.Status],      // Enum Âà ¤¤¤å¦WºÙ¡]¥Î¦r¨å¹ïÀ³¡^
-            GenreName = m.MovieGenres.Select(mg => mg.Genre.GenreName).ToList(),    // ¦h¹ï¦h¡A¨ú¥X¦WºÙ²M³æ
-            Runtime = m.Runtime,
-            Rate = (int)m.Rate,                                 // Enum Âà int
-            RateName = MovieRateNames.Names[m.Rate],            // Enum Âà ¤¤¤å¦WºÙ¡]¥Î¦r¨å¹ïÀ³¡^
-            ReleaseDate = m.ReleaseDate,
-            ProvideVersionName = m.MovieProvideVersions.Select(mp => mp.ProvideVersion.ProvideVersionName).ToList()
-        }).ToList();
-
+        // åŒ…è£æˆçµ±ä¸€å›æ‡‰æ ¼å¼å¾Œå›å‚³ HTTP 200
+        // æœ‰è³‡æ–™ vs ç©ºæ¸…å–®çµ¦ä¸åŒçš„æç¤ºè¨Šæ¯ï¼ˆéƒ½æ˜¯ 200ï¼Œä¸æ˜¯ 404ï¼‰
         return Ok(ApiResponse<List<MovieListItemDto>>.Success(
             data,
-            data.Count > 0 ? "¦¨¥\¬d¸ß¹q¼v¦Cªí!" : "¨S¦³²Å¦X±ø¥óªº¸ê®Æ!"
+            data.Count > 0 ? "æˆåŠŸæŸ¥è©¢é›»å½±åˆ—è¡¨!" : "æ²’æœ‰ç¬¦åˆæ¢ä»¶çš„è³‡æ–™!"
         ));
-        /**NOTE
-         * ¤T¤¸¹Bºâ¤l¡G¦³¸ê®Æ/µL¸ê®Æµ¹¤£¦P°T®§¡A¦ı³£¬O 200 OK
-         */
     }
-
-
-
-    // ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù
-    //  GET /api/movies/{id}
-    // ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù
-    [HttpGet("{id}")]                               // ¸ô®|°Ñ¼Æ¡A¹ïÀ³ api/movies/abc123
+    
+    // ==== GET /api/movies/{id}ï¼šæŸ¥è©¢å–®ç­†é›»å½± ====================================
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var movie = await _context.Movies
-            .Include(m => m.MovieGenres).ThenInclude(mg => mg.Genre)
-            .Include(m => m.MovieProvideVersions).ThenInclude(mp => mp.ProvideVersion)
-            .Include(m => m.MovieCasts)                 // Detail ¤~»İ­nºt­û¡AList ¤£»İ­n ¡÷ ¥u¦b³o¸Ì Include
-            .FirstOrDefaultAsync(m => m.MovieId == id); // §ä²Ä¤@µ§²Å¦Xªº¡A§ä¤£¨ì¦^¶Ç null
+        // å‘¼å« Service ä¾ ID æŸ¥è©¢ï¼ˆæ‰¾ä¸åˆ°æ™‚ Service å›å‚³ nullï¼‰
+        var data = await _service.GetByIdAsync(id);
 
-        if (movie == null)
-            return NotFound(ApiResponse<object>.Fail("¬dµL¦¹¹q¼v!"));    // 404 Not Found
+        // Service å›å‚³ null â†’ åŒ…è£æˆå¤±æ•—å›æ‡‰å¾Œå›å‚³ HTTP 404
+        if (data == null)
+            return NotFound(ApiResponse<object>.Fail("æŸ¥ç„¡æ­¤é›»å½±!"));
 
-        var data = new MovieDetailDto                   // Detail DTO ¤ñ List DTO ¦h§ó¦hÄæ¦ì
-        {
-            Id = movie.MovieId,
-            Title = movie.Title,
-            EnTitle = movie.EnTitle,
-            // ¹q¼vÃş«¬¡]Genre¡^¦P®Éµ¹ ID ©M Name¡GID ¨Ñ«eºİªí³æ¹w¿ï¡AName ¨ÑÅã¥Ü
-            Genre = movie.MovieGenres.Select(mg => mg.GenreId).ToList(),                // µ¹«eºİ¥N½X²M³æ
-            GenreName = movie.MovieGenres.Select(mg => mg.Genre.GenreName).ToList(),    // µ¹«eºİÅã¥Ü¥Îªº¦WºÙ
-            Runtime = movie.Runtime,
-            ProvideVersion = movie.MovieProvideVersions.Select(mp => mp.ProvideVersionId).ToList(),
-            ProvideVersionName = movie.MovieProvideVersions.Select(mp => mp.ProvideVersion.ProvideVersionName).ToList(),
-            // ¹q¼v¤À¯Å¡]Rate¡^¦P®Éµ¹ ID ©M Name¡GID ¨Ñ«eºİªí³æ¹w¿ï¡AName ¨ÑÅã¥Ü
-            Rate = (int)movie.Rate,
-            RateName = MovieRateNames.Names[movie.Rate],
-            Director = movie.Director,
-            Cast = movie.MovieCasts.Select(mc => mc.CastName).ToList(),
-            Description = movie.Description,
-            Status = (int)movie.Status,
-            StatusName = MovieStatusNames.Names[movie.Status],
-            ReleaseDate = movie.ReleaseDate,
-            TrailerLink = movie.TrailerLink,
-            Distributor = movie.Distributor,
-            PosterUrl = movie.PosterUrl
-        };
-
-        return Ok(ApiResponse<MovieDetailDto>.Success(data, "¦¨¥\¬d¸ß¹q¼v¸ê°T!"));
+        // æ‰¾åˆ°è³‡æ–™ â†’ åŒ…è£æˆæˆåŠŸå›æ‡‰å¾Œå›å‚³ HTTP 200
+        return Ok(ApiResponse<MovieDetailDto>.Success(data, "æˆåŠŸæŸ¥è©¢é›»å½±è³‡è¨Š!"));
     }
 }
