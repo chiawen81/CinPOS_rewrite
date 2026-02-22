@@ -34,8 +34,16 @@ public interface IMovieService
         DateTime? dateE            // 上映日期範圍：結束日
     );
 
+    
     // ── 查詢單筆 ──────────────────────────────────────────────────
     // [目的] 依主鍵 ID 取得單一電影的完整資訊
     // [回傳] MovieDetailDto?：找到回傳 DTO；找不到回傳 null，由 Controller 決定要回 404 還是其他處理
     Task<MovieDetailDto?> GetByIdAsync(string id);
+
+
+    // ── 新增單筆 ──────────────────────────────────────────────────
+    // [目的] 接收前端傳入的 DTO，建立電影資料後回傳完整的電影詳情
+    // [回傳] MovieDetailDto：新增成功後的完整電影資訊
+    Task<MovieDetailDto> CreateAsync(MovieCreateDto dto);
+
 }

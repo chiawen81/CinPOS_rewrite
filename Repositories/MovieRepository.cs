@@ -25,7 +25,9 @@ public class MovieRepository : IMovieRepository
     private readonly AppDbContext _context;                         // readonly：只在建構子賦值，防止被意外重新指派
     public MovieRepository(AppDbContext context) => _context = context; // 透過 DI 注入 DbContext
 
-    // ── GetListAsync：依條件查詢多筆電影，回傳原始 Entity 清單 ────────────────
+    // =======================================================================================
+    //     GetListAsync：依條件查詢多筆電影，回傳原始 Entity 清單
+    // =======================================================================================
     public async Task<List<Movie>> GetListAsync(MovieStatus? status, string? title, DateTime? dateS, DateTime? dateE)
     {
         // 建立基礎查詢，預先 JOIN 載入關聯資料（避免後續迴圈造成 N+1 查詢問題）
@@ -49,7 +51,10 @@ public class MovieRepository : IMovieRepository
         return await query.ToListAsync();
     }
 
-    // ── GetByIdAsync：依主鍵 ID 查詢單筆電影，回傳原始 Entity ─────────────────
+
+    // =======================================================================================
+    //     GetByIdAsync：依主鍵 ID 查詢單筆電影，回傳原始 Entity
+    // =======================================================================================
     // 比 GetListAsync 多 Include MovieCasts（詳情頁需要演員資料，列表頁不需要）
     public async Task<Movie?> GetByIdAsync(string id)
     {
@@ -58,5 +63,16 @@ public class MovieRepository : IMovieRepository
             .Include(m => m.MovieProvideVersions).ThenInclude(mp => mp.ProvideVersion)
             .Include(m => m.MovieCasts)                                                // 詳情頁專用：載入演員清單
             .FirstOrDefaultAsync(m => m.MovieId == id);                                // 找不到時回傳 null
+    }
+
+
+    // =======================================================================================
+    //     CreateAsync：新增單筆電影至資料庫，回傳原始 Entity
+    // =======================================================================================
+    public async Task<Movie> CreateAsync(Movie movie)
+    {
+        _context.Movies.Add(movie);        // 將 Entity 加入 EF Core 的追蹤清單（尚未寫入 DB）
+        await _context.SaveChangesAsync(); // 實際執行 INSERT SQL，寫入資料庫
+        return movie;                      // 回傳已存入的 Entity（此時 MovieId 已確定）
     }
 }

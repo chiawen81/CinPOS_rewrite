@@ -29,6 +29,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     private readonly IMovieService _service;
     public MoviesController(IMovieService service) => _service = service; // 注入 Service 介面，不依賴具體實作
     
+
     // ==== GET /api/movies：查詢電影列表 =========================================
     [HttpGet]
     public async Task<IActionResult> GetList(
@@ -48,6 +49,8 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
         ));
     }
     
+
+
     // ==== GET /api/movies/{id}：查詢單筆電影 ====================================
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
@@ -62,4 +65,21 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
         // 找到資料 → 包裝成成功回應後回傳 HTTP 200
         return Ok(ApiResponse<MovieDetailDto>.Success(data, "成功查詢電影資訊!"));
     }
+
+
+
+    // ==== POST /api/movies：新增電影 ============================================
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] MovieCreateDto dto)
+    {
+        // [ApiController] 會自動驗證 [Required] 等 DataAnnotations，失敗直接回 400
+        var data = await _service.CreateAsync(dto);
+        return CreatedAtAction(
+            nameof(GetById),                          // 指向 GET /api/movies/{id}
+            new { id = data.Id },                     // 回傳 Location Header
+            ApiResponse<MovieDetailDto>.Success(data, "成功新增電影資訊!")
+        );
+    }
+
+
 }

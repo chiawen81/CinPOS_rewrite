@@ -34,8 +34,15 @@ public interface IMovieRepository
         DateTime? dateE            // 上映日期範圍：結束日
     );
 
+
     // ── 查詢單筆 ──────────────────────────────────────────────────
     // [目的] 依主鍵 ID 取得單一電影
     // [回傳] Movie?：找到回傳 Entity；找不到回傳 null（由呼叫方決定如何處理 404）
     Task<Movie?> GetByIdAsync(string id);
+
+
+    // ── 新增單筆 ────────────────────────────────────────────────── 
+    // [目的] 新增單一電影
+    // [回傳]
+    Task<Movie> CreateAsync(Movie movie);
 }

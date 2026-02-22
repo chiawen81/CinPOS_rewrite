@@ -14,6 +14,7 @@ using CinPOS_rewrite.DTOs.Movie;       // MovieListItemDto、MovieDetailDto（�
 using CinPOS_rewrite.Constants;        // MovieStatusNames、MovieRateNames（Enum → 中文名稱的字典）
 using CinPOS_rewrite.Enums;            // MovieStatus、MovieRate（Enum 型別，用於型別轉換）
 using CinPOS_rewrite.Repositories;     // IMovieRepository（資料存取介面）
+using CinPOS_rewrite.Models;           // MovieCast 等 Entity
 
 // ── 宣告命名空間 ──────────────────────────────────────────────────
 namespace CinPOS_rewrite.Services;
@@ -38,11 +39,11 @@ public class MovieService : IMovieService
         {
             Id = m.MovieId,
             Title = m.Title,
-            StatusName = MovieStatusNames.Names[movie.Status],                                 // Enum 轉為 中文名稱（字典查找）
-            GenreName = movie.MovieGenres.Select(mg => mg.Genre.GenreName).ToList(),           // 多對多關聯 轉為 名稱清單（供前端顯示）
+            StatusName = MovieStatusNames.Names[m.Status],                                     // Enum 轉為 中文名稱（字典查找）
+            GenreName = m.MovieGenres.Select(mg => mg.Genre.GenreName).ToList(),               // 多對多關聯 轉為 名稱清單（供前端顯示）
             Runtime = m.Runtime,
-            Rate = (int)movie.Rate,                                                            // Enum 轉為 int（不轉的話 JSON 會是字串如 "PG"）
-            RateName = MovieRateNames.Names[movie.Rate],                                       // Enum 轉為 中文名稱（字典查找）
+            Rate = (int)m.Rate,                                                                // Enum 轉為 int（不轉的話 JSON 會是字串如 "PG"）
+            RateName = MovieRateNames.Names[m.Rate],                                           // Enum 轉為 中文名稱（字典查找）
             ReleaseDate = m.ReleaseDate,
             ProvideVersionName = m.MovieProvideVersions
                                   .Select(mp => mp.ProvideVersion.ProvideVersionName).ToList() // 多對多關聯 轉為 名稱清單（供前端顯示）
@@ -91,4 +92,50 @@ public class MovieService : IMovieService
          * Rate、Status 不轉 int 的話，回傳給前端的 JSON 會是像 "NowPlaying" 的字串，而不是 1
          */
     }
+
+
+    // =======================================================================================
+    //     CreateAsync：新增單筆電影，回傳 MovieDetailDto（含完整欄位）
+    // =======================================================================================
+    public async Task<MovieDetailDto> CreateAsync(MovieCreateDto dto)
+    {
+        // 將 DTO 組裝成 Entity
+        var movie = new Movie
+        {
+            MovieId = Guid.NewGuid().ToString(),
+            Title = dto.Title,
+            EnTitle = dto.EnTitle,
+            Runtime = dto.Runtime,
+            Rate = (MovieRate)dto.Rate,             // int 轉 Enum
+            Director = dto.Director,
+            Description = dto.Description,
+            Status = (MovieStatus)dto.Status,         // int 轉 Enum
+            ReleaseDate = dto.ReleaseDate,
+            TrailerLink = dto.TrailerLink,
+            Distributor = dto.Distributor,
+            PosterUrl = dto.PosterUrl,
+
+            // 多對多：只建中間表記錄，不需要載入完整關聯 Entity
+            MovieGenres = dto.Genre
+                .Select(gId => new MovieGenre { GenreId = gId })
+                .ToList(),
+
+            MovieProvideVersions = dto.ProvideVersion
+                .Select(pvId => new MovieProvideVersion { ProvideVersionId = pvId })
+                .ToList(),
+
+            // 一對多：直接建立 Cast Entity
+            MovieCasts = (dto.Cast ?? [])
+                .Select(name => new MovieCast { CastName = name })
+                .ToList()
+        };
+
+        // 存入資料庫
+        await _repo.CreateAsync(movie);
+
+        // 重新查詢以取得完整關聯資料（Genre名稱、ProvideVersion名稱等）
+        // 直接呼叫已實作的 GetByIdAsync，避免重複組裝 DTO 邏輯
+        return (await GetByIdAsync(movie.MovieId))!;
+    }
+
 }
