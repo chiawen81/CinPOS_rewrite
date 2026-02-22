@@ -22,7 +22,7 @@ namespace CinPOS_rewrite.Repositories;
 public class MovieRepository : IMovieRepository
 {
     // ── 依賴注入 ──────────────────────────────────────────────────
-    private readonly AppDbContext _context;                         // readonly：只在建構子賦值，防止被意外重新指派
+    private readonly AppDbContext _context;                             // readonly：只在建構子賦值，防止被意外重新指派
     public MovieRepository(AppDbContext context) => _context = context; // 透過 DI 注入 DbContext
 
     // =======================================================================================

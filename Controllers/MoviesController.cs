@@ -33,7 +33,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     // ==== GET /api/movies：查詢電影列表 =========================================
     [HttpGet]
     public async Task<IActionResult> GetList(
-        [FromQuery] MovieStatus? status,  // Query String 參數：篩選狀態（ASP.NET Core 會自動解析 int → Enum）
+        [FromQuery] MovieStatus? status,  // Query String 參數：篩選狀態（ASP.NET Core 會自動解析將 int 轉成 Enum）
         [FromQuery] string? title,        // Query String 參數：模糊搜尋名稱
         [FromQuery] DateTime? searchDateS,// Query String 參數：上映日期起始
         [FromQuery] DateTime? searchDateE)// Query String 參數：上映日期結束

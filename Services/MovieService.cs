@@ -29,7 +29,11 @@ public class MovieService : IMovieService
     // =======================================================================================
     //     GetListAsync：查詢多筆電影，回傳 MovieListItemDto 清單
     // =======================================================================================
-    public async Task<List<MovieListItemDto>> GetListAsync(MovieStatus? status, string? title, DateTime? dateS, DateTime? dateE)
+    public async Task<List<MovieListItemDto>> GetListAsync(
+        MovieStatus? status, 
+        string? title, 
+        DateTime? dateS, 
+        DateTime? dateE)
     {
         // 呼叫 Repository，帶入所有篩選條件（null = 不套用該條件）
         var movies = await _repo.GetListAsync(status, title, dateS, dateE);
@@ -106,10 +110,10 @@ public class MovieService : IMovieService
             Title = dto.Title,
             EnTitle = dto.EnTitle,
             Runtime = dto.Runtime,
-            Rate = (MovieRate)dto.Rate,             // int 轉 Enum
+            Rate = (MovieRate)dto.Rate,                                                // int 轉為 Enum
             Director = dto.Director,
             Description = dto.Description,
-            Status = (MovieStatus)dto.Status,         // int 轉 Enum
+            Status = (MovieStatus)dto.Status,                                          // int 轉為 Enum
             ReleaseDate = dto.ReleaseDate,
             TrailerLink = dto.TrailerLink,
             Distributor = dto.Distributor,
