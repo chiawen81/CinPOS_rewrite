@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;   // Include()、ThenInclude()、ToListAsyn
 using CinPOS_rewrite.Data;             // AppDbContext（DB 連線與 DbSet）
 using CinPOS_rewrite.Models;           // Movie、Genre、ProvideVersion 等 Entity
 using CinPOS_rewrite.Enums;            // MovieStatus（用於篩選條件的型別轉換）
+using CinPOS_rewrite.DTOs.Movie;       // MovieUpdateDto（更新方法的參數 DTO）
 
 // ── 宣告命名空間 ──────────────────────────────────────────────────
 namespace CinPOS_rewrite.Repositories;
@@ -75,4 +76,84 @@ public class MovieRepository : IMovieRepository
         await _context.SaveChangesAsync(); // 實際執行 INSERT SQL，寫入資料庫
         return movie;                      // 回傳已存入的 Entity（此時 MovieId 已確定）
     }
+
+
+    // =======================================================================================
+    //     UpdateAsync：更新單筆電影（純欄位 + 關聯重建）
+    // =======================================================================================
+    public async Task<Movie> UpdateAsync(Movie movie, MovieUpdateDto dto)
+    {
+        // ── 純欄位更新（全量覆蓋）────────────────────────────────
+        movie.Title = dto.Title;
+        movie.EnTitle = dto.EnTitle;
+        movie.Runtime = dto.Runtime;
+        movie.Rate = (MovieRate)dto.Rate;
+        movie.Director = dto.Director;
+        movie.Description = dto.Description;
+        movie.Status = (MovieStatus)dto.Status;
+        movie.ReleaseDate = dto.ReleaseDate;
+        movie.TrailerLink = dto.TrailerLink;
+        movie.Distributor = dto.Distributor;
+        movie.PosterUrl = dto.PosterUrl;
+        movie.UpdatedAt = DateTime.Now;
+
+        // ── 關聯重建：先刪後插 ────────────────────────────────────
+        _context.MovieGenres.RemoveRange(movie.MovieGenres);
+        movie.MovieGenres = dto.Genre
+            .Select(gId => new MovieGenre { MovieId = movie.MovieId, GenreId = gId })
+            .ToList();
+
+        _context.MovieProvideVersions.RemoveRange(movie.MovieProvideVersions);
+        movie.MovieProvideVersions = dto.ProvideVersion
+            .Select(pvId => new MovieProvideVersion { MovieId = movie.MovieId, ProvideVersionId = pvId })
+            .ToList();
+
+        _context.MovieCasts.RemoveRange(movie.MovieCasts);
+        movie.MovieCasts = (dto.Cast ?? [])
+            .Select(name => new MovieCast { MovieId = movie.MovieId, CastName = name })
+            .ToList();
+
+        await _context.SaveChangesAsync();
+        return movie;
+    }
+
+
+    // =======================================================================================
+    //     DeleteAsync：依主鍵 ID 刪除單筆電影
+    // =======================================================================================
+    public async Task<bool> DeleteAsync(string id)
+    {
+        var movie = await _context.Movies.FindAsync(id); // FindAsync：只查主鍵，比 FirstOrDefaultAsync 更快
+        if (movie == null) return false;                 // 找不到 → 回傳 false，讓 Controller 決定要回 404
+
+        _context.Movies.Remove(movie);                   // 標記為「待刪除」（尚未寫入 DB）
+        await _context.SaveChangesAsync();               // 實際執行 DELETE SQL
+        return true;
+    }
+    /**NOTE
+     * DeleteAsync 的實作中，關聯資料的刪除是由 EF Core 的 Cascade 功能自動處理的。
+     * 不需要手動刪除 MovieGenre、MovieProvideVersion、MovieCast 等關聯資料。
+     */
+
+
+
+    // =======================================================================================
+    //     UpdateStatusAsync：只更新電影的上映狀態
+    // =======================================================================================
+    public async Task<bool> UpdateStatusAsync(string id, int status)
+    {
+        var movie = await _context.Movies.FindAsync(id); // FindAsync：只查主鍵，不載入關聯（夠用即可）
+        if (movie == null) return false;                 // 找不到 → 回傳 false，讓 Controller 決定要回 404
+
+        movie.Status = (MovieStatus)status;              // int 轉 Enum
+        movie.UpdatedAt = DateTime.Now;                  // 記錄異動時間
+
+        await _context.SaveChangesAsync();               // 實際執行 UPDATE SQL（只更新有異動的欄位）
+        return true;
+    }
+    /**NOTE
+     * 只改 Status 與 UpdatedAt，其餘欄位完全不動
+     * 比 UpdateAsync 更輕量，不需要載入關聯資料
+     */
+
 }

@@ -18,6 +18,7 @@
 // ── 引用命名空間 ──────────────────────────────────────────────────
 using CinPOS_rewrite.Models;   // Movie、Genre、ProvideVersion 等 Entity
 using CinPOS_rewrite.Enums;    // MovieStatus、MovieRate 等列舉型別
+using CinPOS_rewrite.DTOs.Movie;   // MovieUpdateDto（更新方法的參數 DTO）
 
 // ── 宣告命名空間 ──────────────────────────────────────────────────
 namespace CinPOS_rewrite.Repositories;
@@ -45,4 +46,22 @@ public interface IMovieRepository
     // [目的] 新增單一電影
     // [回傳]
     Task<Movie> CreateAsync(Movie movie);
+
+
+    // ── 更新單筆 ──────────────────────────────────────────────────
+    // [目的] 將已修改好的 Entity 存回 DB（含關聯重建）
+    // [回傳] Movie：更新後的完整 Entity
+    Task<Movie> UpdateAsync(Movie movie, MovieUpdateDto dto);
+
+
+    // ── 刪除單筆 ──────────────────────────────────────────────────
+    // [目的] 依主鍵 ID 刪除單一電影（關聯資料由 Cascade 自動刪除）
+    // [回傳] true = 刪除成功；false = 找不到該電影
+    Task<bool> DeleteAsync(string id);
+
+
+    // ── 更新上映狀態 ──────────────────────────────────────────────
+    // [目的] 只異動 Status 欄位，不影響其他資料
+    // [回傳] true = 更新成功；false = 找不到該電影
+    Task<bool> UpdateStatusAsync(string id, int status);
 }

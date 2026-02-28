@@ -82,4 +82,45 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     }
 
 
+
+    // ==== PUT /api/movies/{id}：全量更新電影 ============================================
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] MovieUpdateDto dto)
+    {
+        var data = await _service.UpdateAsync(id, dto);
+
+        if (data == null)
+            return NotFound(ApiResponse<object>.Fail("查無此電影!"));
+
+        return Ok(ApiResponse<MovieDetailDto>.Success(data, "成功更新電影資訊!"));
+    }
+
+
+
+    // ==== DELETE /api/movies/{id}：刪除電影 =============================================
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var success = await _service.DeleteAsync(id);
+
+        if (!success)
+            return NotFound(ApiResponse<object>.Fail("查無此電影!"));   // 找不到 → 404
+
+        return Ok(ApiResponse<object>.Success(null, "成功刪除電影!"));  // 刪除成功 → 200
+    }
+
+
+
+    // ==== PUT /api/movies/{id}/status：更新電影上映狀態 =================================
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateStatus(string id, [FromBody] MovieStatusUpdateDto dto)
+    {
+        var success = await _service.UpdateStatusAsync(id, dto.Status);
+
+        if (!success)
+            return NotFound(ApiResponse<object>.Fail("查無此電影!"));   // 找不到 → 404
+
+        return Ok(ApiResponse<object>.Success(null, "成功更新上映狀態!")); // 更新成功 → 200
+    }
+
 }

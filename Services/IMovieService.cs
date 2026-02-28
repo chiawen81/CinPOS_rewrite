@@ -46,4 +46,22 @@ public interface IMovieService
     // [回傳] MovieDetailDto：新增成功後的完整電影資訊
     Task<MovieDetailDto> CreateAsync(MovieCreateDto dto);
 
+
+    // ── 更新單筆 ──────────────────────────────────────────────────
+    // [目的] 接收 PATCH DTO，更新後回傳完整 MovieDetailDto
+    // [回傳] null = 找不到電影
+    Task<MovieDetailDto?> UpdateAsync(string id, MovieUpdateDto dto);
+
+
+    // ── 刪除單筆 ──────────────────────────────────────────────────
+    // [目的] 依主鍵 ID 刪除電影
+    // [回傳] true = 刪除成功；false = 找不到該電影（由 Controller 決定要回 404）
+    Task<bool> DeleteAsync(string id);
+
+
+    // ── 更新上映狀態 ──────────────────────────────────────────────
+    // [目的] 只異動電影的上映狀態
+    // [回傳] true = 更新成功；false = 找不到該電影
+    Task<bool> UpdateStatusAsync(string id, int status);
+
 }

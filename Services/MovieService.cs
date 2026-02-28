@@ -142,4 +142,40 @@ public class MovieService : IMovieService
         return (await GetByIdAsync(movie.MovieId))!;
     }
 
+
+    // =======================================================================================
+    //     UpdateAsync：更新單筆電影，回傳 MovieDetailDto
+    // =======================================================================================
+    public async Task<MovieDetailDto?> UpdateAsync(string id, MovieUpdateDto dto)
+    {
+        // 查詢含所有關聯的完整 Entity（更新關聯需要先載入才能 RemoveRange）
+        var movie = await _repo.GetByIdAsync(id);
+        if (movie == null) return null;
+
+        await _repo.UpdateAsync(movie, dto);
+
+        // 重新查詢以確保回傳資料是最新狀態
+        return await GetByIdAsync(id);
+    }
+
+
+    // =======================================================================================
+    //     DeleteAsync：刪除單筆電影
+    // =======================================================================================
+    public async Task<bool> DeleteAsync(string id)
+    {
+        return await _repo.DeleteAsync(id); // 直接委派給 Repository，回傳 Repository 的結果
+    }
+
+
+
+    // =======================================================================================
+    //     UpdateStatusAsync：更新電影上映狀態
+    // =======================================================================================
+    public async Task<bool> UpdateStatusAsync(string id, int status)
+    {
+        return await _repo.UpdateStatusAsync(id, status); // 直接委派給 Repository，回傳 Repository 的結果
+    }
+
+
 }

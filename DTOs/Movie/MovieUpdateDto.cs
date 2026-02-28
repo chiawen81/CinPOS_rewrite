@@ -3,11 +3,10 @@ using System.ComponentModel.DataAnnotations;
 namespace CinPOS_rewrite.DTOs.Movie;
 
 /**
- * PATCH request body，多一個 Id
+ * PUT 更新電影
  */
 
 public class MovieUpdateDto : MovieCreateDto
 {
-    [Required]
-    public string Id { get; set; } = null!;
+
 }
