@@ -14,6 +14,7 @@ using CinPOS_rewrite.Data;                          // AppDbContext（DB 連線�
 using CinPOS_rewrite.Data.Seeding;                  // DbSeeder（開發用假資料，目前已停用）
 using CinPOS_rewrite.Repositories;                  // IMovieRepository、MovieRepository
 using CinPOS_rewrite.Services;                      // IMovieService、MovieService
+using Scalar.AspNetCore;                            // AddOpenApi()、MapOpenApi() 等 Swagger 相關擴充方法
 
 
 // ======================================================================================================================
@@ -56,6 +57,7 @@ var app = builder.Build();          // 根據上方所有註冊，建置最終�
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();               // 開發環境才掛載 OpenAPI 端點（/openapi/v1.json）
+    app.MapScalarApiReference();    // 掛載 Scalar UI 介面（互動式 API 文件瀏覽器，比 Swagger UI 更現代化）
 }
 
 // ── 正式 Middleware Pipeline ────────────────────────────────────────────

@@ -28,9 +28,10 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     // ── 依賴注入 ──────────────────────────────────────────────────
     private readonly IMovieService _service;
     public MoviesController(IMovieService service) => _service = service; // 注入 Service 介面，不依賴具體實作
-    
+
 
     // ==== GET /api/movies：查詢電影列表 =========================================
+    /// <summary>取得電影列表</summary>
     [HttpGet]
     public async Task<IActionResult> GetList(
         [FromQuery] MovieStatus? status,  // Query String 參數：篩選狀態（ASP.NET Core 會自動解析將 int 轉成 Enum）
@@ -48,10 +49,11 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
             data.Count > 0 ? "成功查詢電影列表!" : "沒有符合條件的資料!"
         ));
     }
-    
+
 
 
     // ==== GET /api/movies/{id}：查詢單筆電影 ====================================
+    /// <summary>取得單一電影詳情頁</summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
@@ -69,6 +71,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
 
 
     // ==== POST /api/movies：新增電影 ============================================
+    /// <summary>新增電影詳情頁</summary>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] MovieCreateDto dto)
     {
@@ -83,7 +86,8 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
 
 
 
-    // ==== PUT /api/movies/{id}：全量更新電影 ============================================
+    // ==== PUT /api/movies/{id}：更新電影（覆蓋更新） ============================
+    /// <summary>更新電影詳情頁</summary>
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] MovieUpdateDto dto)
     {
@@ -98,6 +102,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
 
 
     // ==== DELETE /api/movies/{id}：刪除電影 =============================================
+    /// <summary>刪除電影</summary>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
@@ -112,6 +117,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
 
 
     // ==== PUT /api/movies/{id}/status：更新電影上映狀態 =================================
+    /// <summary>更新電影上映狀態</summary>
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateStatus(string id, [FromBody] MovieStatusUpdateDto dto)
     {
