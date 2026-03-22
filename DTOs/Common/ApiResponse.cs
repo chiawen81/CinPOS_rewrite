@@ -2,21 +2,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
 namespace CinPOS_rewrite.DTOs.Common;
-/**
- * ²Î¤@ response wrapper
- */
 
 public class ApiResponse<T>
 {
-    [Description("ª¬ºA½X (1:¦¨¥\ -1:¥¢±Ñ)")]
+    [Description("ç‹€æ…‹ç¢¼ (1:æˆåŠŸ -1:å¤±æ•—)")]
     [DefaultValue(1)]
     public int Code { get; set; }
 
-    [Description("¦^À³°T®§")]
-    [DefaultValue("¾Ş§@¦¨¥\")]
+    [Description("å›å‚³è¨Šæ¯")]
+    [DefaultValue("æ“ä½œæˆåŠŸ")]
     public string Message { get; set; } = null!;
 
-    [Description("¦^À³¸ê®Æ")]
+    [Description("å›å‚³è³‡æ–™")]
     public T? Data { get; set; }
 
     public static ApiResponse<T> Success(T data, string message) =>
