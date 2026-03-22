@@ -53,12 +53,11 @@ builder.Services.AddOpenApi();      // 自動產生 API 文件，僅開發環境
 // ======================================================================================================================
 var app = builder.Build();          // 根據上方所有註冊，建置最終的應用程式實例
 
-// ── 開發環境專用 Middleware ────────────────────────────────────────────
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();               // 開發環境才掛載 OpenAPI 端點（/openapi/v1.json）
-    app.MapScalarApiReference();    // 掛載 Scalar UI 介面（互動式 API 文件瀏覽器，比 Swagger UI 更現代化）
-}
+// ── API 文件 Middleware ────────────────────────────────────────────
+// 開發與正式環境皆開放
+app.MapOpenApi();               // 掛載 OpenAPI 端點（/openapi/v1.json），提供機器可讀的 API 規格
+app.MapScalarApiReference();    // 掛載 Scalar UI 介面（互動式 API 文件瀏覽器，比 Swagger UI 更現代化）
+
 
 // ── 正式 Middleware Pipeline ────────────────────────────────────────────
 // Azure 在前端已經處理 HTTPS，加 UseHttpsRedirection 反而會報錯
