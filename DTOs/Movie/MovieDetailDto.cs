@@ -1,81 +1,81 @@
-using System.ComponentModel.DataAnnotations;
+ï»¿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
 namespace CinPOS_rewrite.DTOs.Movie;
 
 /**
- * ¹ïÀ³ GET /api/movies/{id} ªº data
+ * å°æ‡‰ GET /api/movies/{id} çš„ data
  */
 
 public class MovieDetailDto
 {
-    [Description("¹q¼vID")]
+    [Description("é›»å½±ID")]
     [DefaultValue("M001")]
     public string Id { get; set; } = null!;
 
-    [Description("¹q¼v¦WºÙ")]
-    [DefaultValue("Ãö©ó§Ú©M°­ÅÜ¦¨®a¤Hªº¨º¥ó¨Æ")]
+    [Description("é›»å½±åç¨±")]
+    [DefaultValue("é—œæ–¼æˆ‘å’Œé¬¼è®Šæˆå®¶äººçš„é‚£ä»¶äº‹")]
     public string Title { get; set; } = null!;
 
-    [Description("­^¤å¦WºÙ")]
+    [Description("è‹±æ–‡åç¨±")]
     [DefaultValue("My Best Friend's Exorcism")]
     public string? EnTitle { get; set; }
 
-    [Description("¹q¼vÃş«¬ID²M³æ")]
+    [Description("é›»å½±é¡å‹IDæ¸…å–®")]
     public List<int> Genre { get; set; } = null!;
 
-    [Description("¹q¼vÃş«¬¦WºÙ²M³æ")]
+    [Description("é›»å½±é¡å‹åç¨±æ¸…å–®")]
     public List<string> GenreName { get; set; } = null!;
 
-    [Description("¤ùªø(¤ÀÄÁ)")]
+    [Description("ç‰‡é•·(åˆ†é˜)")]
     [DefaultValue(134)]
     public int Runtime { get; set; }
 
-    [Description("©ñ¬Mª©¥»ID²M³æ")]
+    [Description("æ”¾æ˜ ç‰ˆæœ¬IDæ¸…å–®")]
     public List<int> ProvideVersion { get; set; } = null!;
 
-    [Description("©ñ¬Mª©¥»¦WºÙ²M³æ")]
+    [Description("æ”¾æ˜ ç‰ˆæœ¬åç¨±æ¸…å–®")]
     public List<string> ProvideVersionName { get; set; } = null!;
 
-    [Description("¤À¯Å¨î«× (0:´¶¹M¯Å 6:«OÅ@¯Å 12:»²12¯Å 15:»²15¯Å 18:­­¨î¯Å)")]
+    [Description("åˆ†ç´šåˆ¶åº¦ (0:æ™®éç´š 6:ä¿è­·ç´š 12:è¼”12ç´š 15:è¼”15ç´š 18:é™åˆ¶ç´š)")]
     [DefaultValue(0)]
     public int Rate { get; set; }
 
-    [Description("¤À¯Å¦WºÙ")]
-    [DefaultValue("´¶¹M¯Å")]
+    [Description("åˆ†ç´šåç¨±")]
+    [DefaultValue("æ™®éç´š")]
     public string RateName { get; set; } = null!;
 
-    [Description("¾Éºt")]
-    [DefaultValue("µ{°¶»¨")]
+    [Description("å°æ¼”")]
+    [DefaultValue("ç¨‹å‰è±ª")]
     public string? Director { get; set; }
 
-    [Description("ºt­û²M³æ")]
+    [Description("æ¼”å“¡æ¸…å–®")]
     public List<string> Cast { get; set; } = null!;
 
-    [Description("¹q¼vÂ²¤¶")]
-    [DefaultValue("´ú¸Õ¥Î¹q¼v")]
+    [Description("é›»å½±ç°¡ä»‹")]
+    [DefaultValue("æ¸¬è©¦ç”¨é›»å½±")]
     public string? Description { get; set; }
 
-    [Description("¤W¬Mª¬ºA (-1:¤w¤UÀÉ 0:Äw³Æ¤¤ 1:¤W¬M¤¤)")]
+    [Description("ä¸Šæ˜ ç‹€æ…‹ (-1:å·²ä¸‹æª” 0:ç±Œå‚™ä¸­ 1:ä¸Šæ˜ ä¸­)")]
     [DefaultValue(1)]
     public int Status { get; set; }
 
-    [Description("¤W¬Mª¬ºA¦WºÙ")]
-    [DefaultValue("¤W¬M¤¤")]
+    [Description("ä¸Šæ˜ ç‹€æ…‹åç¨±")]
+    [DefaultValue("ä¸Šæ˜ ä¸­")]
     public string StatusName { get; set; } = null!;
 
-    [Description("¤W¬M¤é´Á")]
+    [Description("ä¸Šæ˜ æ—¥æœŸ")]
     public DateTime ReleaseDate { get; set; }
 
-    [Description("¹w§i¤ù³sµ²")]
+    [Description("é å‘Šç‰‡é€£çµ")]
     [DefaultValue("https://www.youtube.com/watch?v=example")]
     public string? TrailerLink { get; set; }
 
-    [Description("µo¦æ°Ó")]
-    [DefaultValue("µØ¯Ç¥S§Ì")]
+    [Description("ç™¼è¡Œå•†")]
+    [DefaultValue("è¯ç´å…„å¼Ÿ")]
     public string? Distributor { get; set; }
 
-    [Description("®ü³øºô§}")]
+    [Description("æµ·å ±ç¶²å€")]
     [DefaultValue("https://placeholder.com/poster.jpg")]
     public string? PosterUrl { get; set; }
 }

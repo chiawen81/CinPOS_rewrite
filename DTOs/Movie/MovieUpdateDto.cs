@@ -1,9 +1,9 @@
-using System.ComponentModel.DataAnnotations;
+ï»¿using System.ComponentModel.DataAnnotations;
 
 namespace CinPOS_rewrite.DTOs.Movie;
 
 /**
- * PUT §ó·s¹q¼v
+ * PUT æ›´æ–°é›»å½±
  */
 
 public class MovieUpdateDto : MovieCreateDto

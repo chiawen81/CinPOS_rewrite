@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+ï»¿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
 namespace CinPOS_rewrite.DTOs.Movie;
@@ -10,7 +10,7 @@ namespace CinPOS_rewrite.DTOs.Movie;
 public class MovieStatusUpdateDto
 {
     [Required] 
-    [Description("¤W¬Mª¬ºA (-1:¤w¤UÀÉ 0:Äw³Æ¤¤ 1:¤W¬M¤¤)")]
+    [Description("ä¸Šæ˜ ç‹€æ…‹ (-1:å·²ä¸‹æª” 0:ç±Œå‚™ä¸­ 1:ä¸Šæ˜ ä¸­)")]
     [DefaultValue(1)]
     public int Status { get; set; }
 }
