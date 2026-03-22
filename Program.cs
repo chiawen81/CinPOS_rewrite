@@ -61,7 +61,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // ── 正式 Middleware Pipeline ────────────────────────────────────────────
-app.UseHttpsRedirection();          // 將 HTTP 請求自動導向 HTTPS
+// Azure 在前端已經處理 HTTPS，加 UseHttpsRedirection 反而會報錯
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();      // 將 HTTP 請求自動導向 HTTPS（限本機）
+}         
 app.UseAuthorization();             // 啟用授權機制（驗證 JWT / Policy 等）
 app.MapControllers();               // 將 Controller 的路由對應到 HTTP 端點
 
