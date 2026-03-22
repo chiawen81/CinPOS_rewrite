@@ -21,11 +21,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
       - name: Publish
-        run: dotnet publish --configuration Release --output ./publish --no-build
+        run: dotnet publish --configuration Release --output ./publish --no-restore
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
