@@ -5,7 +5,7 @@
  * ╠══════════════════════════════════════════════════════════╣
  * ║  職責：接收 HTTP Request，呼叫 Service，包裝成統一回應格式後回傳                                                   ║
  * ║  ✓ 決定 HTTP 狀態碼（200 / 404 ...）                                                                              ║
- * ║  ✓ 將 Service 回傳的 DTO 包入 ApiResponse&lt;T&gt;                                                                   ║
+ * ║  ✓ 將 Service 回傳的 DTO 包入 ApiResponse&lt;T&gt;                                                                ║
  * ║  ✗ 不處理業務邏輯（那是 Service 的事）                                                                            ║
  * ║  ✗ 不直接操作 DB（那是 Repository 的事）                                                                          ║
  * ╚══════════════════════════════════════════════════════════╝
@@ -60,10 +60,6 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
         // 呼叫 Service 依 ID 查詢（找不到時 Service 回傳 null）
         var data = await _service.GetByIdAsync(id);
 
-        // Service 回傳 null → 包裝成失敗回應後回傳 HTTP 404
-        if (data == null)
-            return NotFound(ApiResponse<object>.Fail("查無此電影!"));
-
         // 找到資料 → 包裝成成功回應後回傳 HTTP 200
         return Ok(ApiResponse<MovieDetailDto>.Success(data, "成功查詢電影資訊!"));
     }
@@ -92,10 +88,6 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     public async Task<IActionResult> Update(string id, [FromBody] MovieUpdateDto dto)
     {
         var data = await _service.UpdateAsync(id, dto);
-
-        if (data == null)
-            return NotFound(ApiResponse<object>.Fail("查無此電影!"));
-
         return Ok(ApiResponse<MovieDetailDto>.Success(data, "成功更新電影資訊!"));
     }
 
@@ -106,11 +98,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var success = await _service.DeleteAsync(id);
-
-        if (!success)
-            return NotFound(ApiResponse<object>.Fail("查無此電影!"));   // 找不到 → 404
-
+        await _service.DeleteAsync(id);
         return Ok(ApiResponse<object>.Success(null, "成功刪除電影!"));  // 刪除成功 → 200
     }
 
@@ -121,11 +109,7 @@ public class MoviesController : ControllerBase  // 繼承 ControllerBase（純 A
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateStatus(string id, [FromBody] MovieStatusUpdateDto dto)
     {
-        var success = await _service.UpdateStatusAsync(id, dto.Status);
-
-        if (!success)
-            return NotFound(ApiResponse<object>.Fail("查無此電影!"));   // 找不到 → 404
-
+        await _service.UpdateStatusAsync(id, dto.Status);
         return Ok(ApiResponse<object>.Success(null, "成功更新上映狀態!")); // 更新成功 → 200
     }
 

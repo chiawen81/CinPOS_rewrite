@@ -15,7 +15,7 @@ using CinPOS_rewrite.Data.Seeding;                  // DbSeeder（開發用假�
 using CinPOS_rewrite.Repositories;                  // IMovieRepository、MovieRepository
 using CinPOS_rewrite.Services;                      // IMovieService、MovieService
 using Scalar.AspNetCore;                            // AddOpenApi()、MapOpenApi() 等 Swagger 相關擴充方法
-
+using CinPOS_rewrite.Middlewares;                   // ExceptionHandlingMiddleware（全域例外處理）
 
 // ======================================================================================================================
 //  階段一：Builder — 建立應用程式並註冊所有服務（DI 容器）
@@ -52,6 +52,9 @@ builder.Services.AddOpenApi();      // 自動產生 API 文件，僅開發環境
 //  注意：Middleware 有順序性，順序錯誤會導致功能異常
 // ======================================================================================================================
 var app = builder.Build();          // 根據上方所有註冊，建置最終的應用程式實例
+
+// ── 全域 Middleware：例外處理 ────────────────────────────────────────────
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // ── API 文件 Middleware ────────────────────────────────────────────
 // 開發與正式環境皆開放

@@ -15,6 +15,7 @@ using CinPOS_rewrite.Constants;        // MovieStatusNames、MovieRateNames（En
 using CinPOS_rewrite.Enums;            // MovieStatus、MovieRate（Enum 型別，用於型別轉換）
 using CinPOS_rewrite.Repositories;     // IMovieRepository（資料存取介面）
 using CinPOS_rewrite.Models;           // MovieCast 等 Entity
+using CinPOS_rewrite.Exceptions;       // NotFoundException、BadRequestException（業務錯誤用例外類別）
 
 // ── 宣告命名空間 ──────────────────────────────────────────────────
 namespace CinPOS_rewrite.Services;
@@ -66,8 +67,8 @@ public class MovieService : IMovieService
         // 呼叫 Repository 取得原始 Entity（含所有關聯資料）
         var movie = await _repo.GetByIdAsync(id);
 
-        // 找不到時直接回 null，讓 Controller 決定要回 404 還是其他 HTTP 狀態碼
-        if (movie == null) return null;
+        // 如果找不到電影，丟出 NotFoundException（由 Controller 捕捉並回傳 404）
+        if (movie == null) throw new NotFoundException($"查無此電影（ID：{id}）");
 
         // 將 Entity 組裝成詳情用 DTO
         return new MovieDetailDto
@@ -150,7 +151,7 @@ public class MovieService : IMovieService
     {
         // 查詢含所有關聯的完整 Entity（更新關聯需要先載入才能 RemoveRange）
         var movie = await _repo.GetByIdAsync(id);
-        if (movie == null) return null;
+        if (movie == null) throw new NotFoundException($"查無此電影（ID：{id}）");
 
         await _repo.UpdateAsync(movie, dto);
 
@@ -164,7 +165,9 @@ public class MovieService : IMovieService
     // =======================================================================================
     public async Task<bool> DeleteAsync(string id)
     {
-        return await _repo.DeleteAsync(id); // 直接委派給 Repository，回傳 Repository 的結果
+        var success = await _repo.DeleteAsync(id); // 直接委派給 Repository，回傳 Repository 的結果
+        if (!success) throw new NotFoundException($"查無此電影（ID：{id}）");
+        return true;
     }
 
 
@@ -174,7 +177,9 @@ public class MovieService : IMovieService
     // =======================================================================================
     public async Task<bool> UpdateStatusAsync(string id, int status)
     {
-        return await _repo.UpdateStatusAsync(id, status); // 直接委派給 Repository，回傳 Repository 的結果
+        var success = await _repo.UpdateStatusAsync(id, status);
+        if (!success) throw new NotFoundException($"查無此電影（ID：{id}）");
+        return true;
     }
 
 
